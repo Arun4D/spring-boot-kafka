@@ -32,31 +32,7 @@ public class OrderConsumer {
 
     @KafkaListener(topics = "ad-study-order-topic", groupId = "ad-event-group")
     public void consume(OrderDetailsDto orderDetailsDto) throws IOException {
-
-        Serde<String> stringSerde = Serdes.String();
-        JsonSerializer jsonSerializer = new JsonSerializer();
-        jsonSerializer.setAddTypeInfo(false);
-
-        JsonDeserializer jsonDeserializer = new JsonDeserializer();
-        jsonDeserializer.addTrustedPackages("za.co.sanlam.epsilon.entity.model");
-
-        final Serde<OrderDetailsDto> jsonSerde = Serdes.serdeFrom(jsonSerializer, jsonDeserializer);
-
-        final StreamsBuilder kStreamBuilder = new StreamsBuilder();
-        KeyValueBytesStoreSupplier storeSupplier = Stores.inMemoryKeyValueStore("ad-study-dw");
-        KTable<String, String> table = kStreamBuilder.table(
-                "ad-study-consumer-topic",
-                Materialized.<String, String>as(storeSupplier)
-                        .withKeySerde(Serdes.String())
-                        .withValueSerde(Serdes.String())
-        );
-
-        final Topology topology = kStreamBuilder.build();
-
-        final KafkaStreams streams = new KafkaStreams(topology, kStreamsConfigs.asProperties());
-
-        KStream<String, OrderDetailsDto> stream = kStreamBuilder.stream("ad-study-customer-topic", Consumed.with(Serdes.String(), jsonSerde));
-
+        
         logger.info(String.format("#### -> Order Details message -> %s", orderDetailsDto));
         logger.info(String.format("#### -> Consumed message -> %s", orderDetailsDto));
     }
