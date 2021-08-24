@@ -1,6 +1,7 @@
 package co.in.ad.study.kafka.config;
 
-import co.in.ad.study.kafka.core.model.EventEntity;
+import co.in.ad.study.kafka.dto.CustomerDto;
+import co.in.ad.study.kafka.dto.OrderDetailsDto;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,8 +18,7 @@ import java.util.Map;
 
 @EnableKafka
 @Configuration
-public class
-KafkaConsumerConfig {
+public class KafkaConsumerConfig {
 
     @Value("${study.kafka.bootstrap-servers}")
     private String bootstrapServers;
@@ -28,9 +28,9 @@ KafkaConsumerConfig {
 
 
     @Bean
-    public ConsumerFactory<String, EventEntity> consumerFactory() {
+    public ConsumerFactory<String, OrderDetailsDto> consumerFactory() {
         Map<String, Object> props = new HashMap<>();
-        JsonDeserializer<EventEntity> jsonDeserializer = new JsonDeserializer(EventEntity.class);
+        JsonDeserializer<OrderDetailsDto> jsonDeserializer = new JsonDeserializer(OrderDetailsDto.class);
         jsonDeserializer.addTrustedPackages("*");
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
@@ -38,13 +38,34 @@ KafkaConsumerConfig {
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
         props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
         return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(),
-                new JsonDeserializer<>(EventEntity.class));
+                new JsonDeserializer<>(OrderDetailsDto.class));
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, EventEntity> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, EventEntity> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    public ConcurrentKafkaListenerContainerFactory<String, OrderDetailsDto> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, OrderDetailsDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
+        return factory;
+    }
+
+    @Bean
+    public ConsumerFactory<String, CustomerDto> customerConsumerFactory() {
+        Map<String, Object> props = new HashMap<>();
+        JsonDeserializer<CustomerDto> jsonDeserializer = new JsonDeserializer(CustomerDto.class);
+        jsonDeserializer.addTrustedPackages("*");
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+        props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
+        return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(),
+                new JsonDeserializer<>(CustomerDto.class));
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, CustomerDto> customerKafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, CustomerDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(customerConsumerFactory());
         return factory;
     }
 }

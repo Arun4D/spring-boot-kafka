@@ -20,8 +20,8 @@ https://kafka.apache.org/quickstart
 
 ````
 study.kafka.bootstrap-servers=localhost:9092
-study.kafka.topic.consumer=ad-study-consumer-topic
-study.kafka.topic.producer=ad-study-producer-topic
+study.kafka.topic.order=ad-study-order-topic
+study.kafka.topic.customer=ad-study-customer-topic
 study.kafka.topic.group=ad-event-group
 ````
 
@@ -42,19 +42,29 @@ docker build --build-arg DEPENDENCY=build/dependency -t arun4d/spring-boot-kafka
 $ ./gradlew bootBuildImage --imageName=arun4d/spring-boot-kafka
 ````
 
-###  Post Sample Curl Request
+###  Order Sample Request
 ````
 curl -X POST -d '{
-    "key":"1",
-    "Data": {
-       "itemId":"11",
-       "customerId":"111"
-    },
-    "coreEventMetadata": {
-        "eventId":"E1",
-         "eventName" : "EV1",
-         "eventGroup" :"EG1",
-         "isBusinessProcess" : true
-    }
-' -H 'Content-Type:application/json' http://localhost:8080/study/event/publish/
+	"itemId":"14",
+     "customerId":"144"
+}' -H 'Content-Type:application/json' http://localhost:8080/study/event/publish/order/
+````
+
+###  Customer Sample Request
+````
+curl -X POST -d '{
+	"firstName":"arun",
+	"lastName":"duraisamy",
+	"dob":"0910",
+	"email":"arun4.duraisamy@gmail.com",
+	"phone":"00000000000000000",
+	"country_code":"+91",
+	"buildingNumber":"144",
+	"street":"vetrivelava nagar",
+	"pinCode":"000000",
+	"city":"coimbatore",
+	"district":"coimbatore",
+	"state":"tamil nadu",
+	"countryName":"india"
+}' -H 'Content-Type:application/json' http://localhost:8080/study/event/publish/customer/
 ````

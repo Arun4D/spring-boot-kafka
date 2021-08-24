@@ -6,8 +6,8 @@ import java.io.Serializable;
 
 @Data
 public class OrderDetailsDto implements Serializable {
-    private String orderId;
-    private String itemId;
-    private String customerId;
+    private Long orderId;
+    private Long itemId;
+    private Long customerId;
 
 }
