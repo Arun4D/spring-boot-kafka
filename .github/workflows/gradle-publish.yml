@@ -4,8 +4,6 @@
 name: Gradle Package
 
 on:
-  release:
-    types: [created]
   workflow_dispatch:
     inputs:
       name:
@@ -13,8 +11,12 @@ on:
         required: true
         default: 'Arun'
 jobs:
+  printInputs:
+    runs-on: ubuntu-latest
+    steps:
+    - run: |
+        echo "Name : ${{ github.event.inputs.name }}"
   build:
-
     runs-on: ubuntu-latest
     permissions:
       contents: read
