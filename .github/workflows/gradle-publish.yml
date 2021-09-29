@@ -31,7 +31,11 @@ jobs:
         distribution: 'adopt'
         server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
         settings-path: ${{ github.workspace }} # location for the settings.xml file
-
+        
+    - name: Change wrapper permissions
+      run: chmod +x ./gradlew
+      
     - name: Build with Gradle
-      run: gradlew build -xtest
+      run: ./gradlew build -xtest
+
 
